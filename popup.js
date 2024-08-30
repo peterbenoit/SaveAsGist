@@ -1,37 +1,37 @@
-const bgp = chrome.extension.getBackgroundPage();
+const bgp = chrome.runtime.getBackgroundPage((backgroundPage) => backgroundPage);
 const btnSubmit = document.getElementById('btnSubmit');
 const btnLogin = document.getElementById('btnLogin');
 const chkBox = document.getElementById('checkBox');
-const isAuthenticated = false;
 let t = null;
 
-chrome.storage.sync.get('gistJotToken', function(data) {
-  if (data.gistJotToken) {
+// Check for stored authentication token
+chrome.storage.sync.get('gistJotToken', ({ gistJotToken }) => {
+  if (gistJotToken) {
     initValues();
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('noteScreen').style.display = 'flex';
-    t = data.gistJotToken;
+    t = gistJotToken;
   } else {
     document.getElementById('noteScreen').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'flex';
   }
 });
 
-function initValues() {
-  // Get text selection
+// Initialize UI fields with selected text and page details
+const initValues = () => {
   chrome.tabs.executeScript(
     { code: 'window.getSelection().toString();' },
-    function(selection) {
-      pageText = selection[0];
+    (selection) => {
+      const pageText = selection[0];
       if (pageText) {
         document.getElementById('txtContent').value = pageText;
       }
     }
   );
 
-  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    pageUrl = tabs[0].url;
-    pageTitle = tabs[0].title;
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const pageUrl = tabs[0].url;
+    const pageTitle = tabs[0].title;
     if (pageTitle) {
       document.getElementById('txtDescription').value = pageTitle;
       document.getElementById('txtFilename').value = convertToSlug(pageTitle) + '.md';
@@ -40,24 +40,26 @@ function initValues() {
       document.getElementById('checkBox').value = pageUrl;
     }
   });
-}
+};
 
-function convertToSlug(Text) {
-  return Text.toLowerCase()
+// Convert text to a slug format
+const convertToSlug = (text) => {
+  return text.toLowerCase()
     .replace(/[^\w ]+/g, '')
     .replace(/ +/g, '-');
-}
+};
 
-btnLogin.onclick = function(element) {
+// Handle login button click
+btnLogin.onclick = () => {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('spinner').style.display = 'flex';
   bgp.launchWebAuthFlow();
 };
 
-// On save event handler
-btnSubmit.onclick = function(element) {
-  let description = document.getElementById('txtDescription').value.trim();
-  let filename = document.getElementById('txtFilename').value.trim();
+// Handle submit button click
+btnSubmit.onclick = () => {
+  const description = document.getElementById('txtDescription').value.trim();
+  const filename = document.getElementById('txtFilename').value.trim();
   let content = document.getElementById('txtContent').value.trim();
 
   if (chkBox.checked) {
@@ -65,72 +67,63 @@ btnSubmit.onclick = function(element) {
   }
 
   if (filename && filename.length > 0) {
-    let payload = {
+    const payload = {
       description: description,
       public: false,
       files: {
-        [filename]: {
-          content: content
-        }
+        [filename]: { content: content }
       }
     };
 
-    // Make call to send the payload to create a new private gist
     saveGist(payload);
   }
   return false;
 };
 
-let clearForm = function() {
+// Save Gist to GitHub
+const saveGist = (payload) => {
+  document.getElementById('noteScreen').style.display = 'none';
+  document.getElementById('spinner').style.display = 'flex';
+
+  request('POST', 'https://api.github.com/gists', t, payload)
+    .then(() => {
+      clearForm();
+      document.getElementById('noteScreen').style.display = 'flex';
+      document.getElementById('spinner').style.display = 'none';
+    })
+    .catch((err) => console.error('Error saving Gist:', err));
+};
+
+// Clear the form fields
+const clearForm = () => {
   document.getElementById('txtDescription').value = '';
   document.getElementById('txtFilename').value = '';
   document.getElementById('txtContent').value = '';
 };
 
-let saveGist = function(payload) {
-  document.getElementById('noteScreen').style.display = 'none';
-  document.getElementById('spinner').style.display = 'flex';
-  request('POST', 'https://api.github.com/gists', t, payload)
-    .then(res => {
-      clearForm();
-      document.getElementById('noteScreen').style.display = 'flex';
-      document.getElementById('spinner').style.display = 'none';
-    })
-    .catch(err => console.log(err));
-};
-
-function request(method, url, token, payload = null) {
+// Make a request to the GitHub API
+const request = (method, url, token, payload = null) => {
   return new Promise((resolve, reject) => {
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-    xhr.onload = function() {
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         return resolve(xhr.response);
       } else {
-        reject(
-          Error({
-            status: xhr.status,
-            statusTextInElse: xhr.statusText
-          })
-        );
+        reject(new Error(`Request failed: ${xhr.status} ${xhr.statusText}`));
       }
     };
-    xhr.onerror = function() {
-      reject(
-        Error({
-          status: xhr.status,
-          statusText: xhr.statusText
-        })
-      );
+    xhr.onerror = () => {
+      reject(new Error(`Network error: ${xhr.status} ${xhr.statusText}`));
     };
     payload ? xhr.send(JSON.stringify(payload)) : xhr.send();
   });
-}
+};
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+// Listen for messages from the background script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'auth_complete') {
-    //  Assign token and show note screen
     t = request.data.access_token;
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('noteScreen').style.display = 'flex';
