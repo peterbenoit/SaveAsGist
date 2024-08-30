@@ -1,49 +1,23 @@
-const bgp = chrome.runtime.getBackgroundPage((backgroundPage) => backgroundPage);
 const btnSubmit = document.getElementById('btnSubmit');
-const btnLogin = document.getElementById('btnLogin');
 const chkBox = document.getElementById('checkBox');
 let t = null;
 
-// Check for stored authentication token
+// Check for stored authentication token when the popup is opened
 chrome.storage.sync.get('gistJotToken', ({ gistJotToken }) => {
   if (gistJotToken) {
-    initValues();
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('noteScreen').style.display = 'flex';
+    // Token exists, initialize UI for creating a Gist
     t = gistJotToken;
+    initValues();
+    document.getElementById('noteScreen').style.display = 'flex';
   } else {
-    document.getElementById('noteScreen').style.display = 'none';
-    document.getElementById('loginScreen').style.display = 'flex';
+    // No token found, open the welcome page for authentication
+    chrome.tabs.create({ url: 'welcome.html' });
+    window.close(); // Close the popup after opening the welcome page
   }
 });
 
-// // Initialize UI fields with selected text and page details
-// const initValues = () => {
-//   chrome.tabs.executeScript(
-//     { code: 'window.getSelection().toString();' },
-//     (selection) => {
-//       const pageText = selection[0];
-//       if (pageText) {
-//         document.getElementById('txtContent').value = pageText;
-//       }
-//     }
-//   );
-
-//   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-//     const pageUrl = tabs[0].url;
-//     const pageTitle = tabs[0].title;
-//     if (pageTitle) {
-//       document.getElementById('txtDescription').value = pageTitle;
-//       document.getElementById('txtFilename').value = convertToSlug(pageTitle) + '.md';
-//     }
-//     if (pageUrl) {
-//       document.getElementById('checkBox').value = pageUrl;
-//     }
-//   });
-// };
-
+// Initialize UI fields with selected text and page details
 const initValues = () => {
-  // Send a message to the service worker to get the selected text
   chrome.runtime.sendMessage({ msg: 'get_selected_text' }, (response) => {
     if (response && response.selectedText) {
       document.getElementById('txtContent').value = response.selectedText;
@@ -58,32 +32,9 @@ const initValues = () => {
       document.getElementById('txtFilename').value = convertToSlug(pageTitle) + '.md';
     }
     if (pageUrl) {
-      document.getElementById('checkBox').value = pageUrl;
+      document.getElementById('hiddenUrl').value = pageUrl;
     }
   });
-};
-
-// Convert text to a slug format
-const convertToSlug = (text) => {
-  return text.toLowerCase()
-    .replace(/[^\w ]+/g, '')
-    .replace(/ +/g, '-');
-};
-
-// Handle login button click
-// btnLogin.onclick = () => {
-//   document.getElementById('loginScreen').style.display = 'none';
-//   document.getElementById('spinner').style.display = 'flex';
-//   bgp.launchWebAuthFlow();
-// };
-
-// Handle login button click
-btnLogin.onclick = () => {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('spinner').style.display = 'flex';
-
-  // Send a message to the service worker to start the OAuth flow
-  chrome.runtime.sendMessage({ msg: 'start_auth' });
 };
 
 // Handle submit button click
@@ -93,7 +44,8 @@ btnSubmit.onclick = () => {
   let content = document.getElementById('txtContent').value.trim();
 
   if (chkBox.checked) {
-    content += `\n\nUrl: ${document.getElementById('checkBox').value.trim()}`;
+    const pageUrl = document.getElementById('hiddenUrl').value;
+    content += `\n\nUrl: ${pageUrl}`;
   }
 
   if (filename && filename.length > 0) {
@@ -124,6 +76,13 @@ const saveGist = (payload) => {
     .catch((err) => console.error('Error saving Gist:', err));
 };
 
+// Convert text to a slug format
+const convertToSlug = (text) => {
+  return text.toLowerCase()
+    .replace(/[^\w ]+/g, '')
+    .replace(/ +/g, '-');
+};
+
 // Clear the form fields
 const clearForm = () => {
   document.getElementById('txtDescription').value = '';
@@ -150,13 +109,3 @@ const request = (method, url, token, payload = null) => {
     payload ? xhr.send(JSON.stringify(payload)) : xhr.send();
   });
 };
-
-// Listen for messages from the background script
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.msg === 'auth_complete') {
-    t = request.data.access_token;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('noteScreen').style.display = 'flex';
-    document.getElementById('spinner').style.display = 'none';
-  }
-});
