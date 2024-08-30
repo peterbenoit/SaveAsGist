@@ -1,0 +1,145 @@
+.container {
+  min-width: 300px;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+}
+
+.flex-row {
+  display: flex;
+  padding: 5px;
+}
+
+.flex-item {
+  flex: 1;
+}
+
+.description {
+  flex: 0 1 35px;
+}
+
+.filename {
+  flex: 0 1 35px;
+}
+
+.content {
+  flex: 1;
+}
+
+.submit {
+  flex: 0 1 50px;
+}
+
+.saveurl {
+  flex: 0 1 20px;
+  align-self: center;
+}
+
+.github-logo {
+  align-self: center;
+}
+
+input[type='text'] {
+  border: solid 3px #ddd;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+textarea {
+  border-radius: 3px;
+  border: solid 3px #ddd;
+  padding: 5px;
+  resize: none;
+}
+
+button {
+  background: #3ecf8e;
+  border-radius: 3px;
+  border: none;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-shadow: 0 1px 3px rgba(36, 180, 126, 0.4);
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+button:active {
+  background: #31a772;
+  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+button:focus {
+  outline: 0;
+}
+
+.spinner {
+  margin: 175px auto;
+  width: 50px;
+  height: 40px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.spinner > div {
+  background-color: #333;
+  height: 100%;
+  width: 6px;
+  display: inline-block;
+
+  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+.spinner .rect3 {
+  -webkit-animation-delay: -1s;
+  animation-delay: -1s;
+}
+
+.spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+.spinner .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+  0%,
+  40%,
+  100% {
+    -webkit-transform: scaleY(0.4);
+  }
+  20% {
+    -webkit-transform: scaleY(1);
+  }
+}
+
+@keyframes sk-stretchdelay {
+  0%,
+  40%,
+  100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }
+  20% {
+    transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+  }
+}
