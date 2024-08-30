@@ -17,17 +17,38 @@ chrome.storage.sync.get('gistJotToken', ({ gistJotToken }) => {
   }
 });
 
-// Initialize UI fields with selected text and page details
+// // Initialize UI fields with selected text and page details
+// const initValues = () => {
+//   chrome.tabs.executeScript(
+//     { code: 'window.getSelection().toString();' },
+//     (selection) => {
+//       const pageText = selection[0];
+//       if (pageText) {
+//         document.getElementById('txtContent').value = pageText;
+//       }
+//     }
+//   );
+
+//   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+//     const pageUrl = tabs[0].url;
+//     const pageTitle = tabs[0].title;
+//     if (pageTitle) {
+//       document.getElementById('txtDescription').value = pageTitle;
+//       document.getElementById('txtFilename').value = convertToSlug(pageTitle) + '.md';
+//     }
+//     if (pageUrl) {
+//       document.getElementById('checkBox').value = pageUrl;
+//     }
+//   });
+// };
+
 const initValues = () => {
-  chrome.tabs.executeScript(
-    { code: 'window.getSelection().toString();' },
-    (selection) => {
-      const pageText = selection[0];
-      if (pageText) {
-        document.getElementById('txtContent').value = pageText;
-      }
+  // Send a message to the service worker to get the selected text
+  chrome.runtime.sendMessage({ msg: 'get_selected_text' }, (response) => {
+    if (response && response.selectedText) {
+      document.getElementById('txtContent').value = response.selectedText;
     }
-  );
+  });
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const pageUrl = tabs[0].url;
@@ -50,10 +71,19 @@ const convertToSlug = (text) => {
 };
 
 // Handle login button click
+// btnLogin.onclick = () => {
+//   document.getElementById('loginScreen').style.display = 'none';
+//   document.getElementById('spinner').style.display = 'flex';
+//   bgp.launchWebAuthFlow();
+// };
+
+// Handle login button click
 btnLogin.onclick = () => {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('spinner').style.display = 'flex';
-  bgp.launchWebAuthFlow();
+
+  // Send a message to the service worker to start the OAuth flow
+  chrome.runtime.sendMessage({ msg: 'start_auth' });
 };
 
 // Handle submit button click
