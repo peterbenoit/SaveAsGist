@@ -11,9 +11,23 @@ A Chrome extension that allows users to easily save selected text, notes, and we
 ## Installation
 
 1. Clone or download this repository to your local machine.
-2. Open Chrome and go to `chrome://extensions/`.
-3. Enable **Developer mode** by toggling the switch in the upper right corner.
-4. Click on **Load unpacked** and select the extension directory.
+2. Add the following content to `config.js`:
+   ```javascript
+   const CONFIG = {
+       client_id: 'YOUR_CLIENT_ID',
+       client_secret: 'YOUR_CLIENT_SECRET'
+   };
+
+   export default CONFIG;
+   ```
+4. Replace 'YOUR_CLIENT_ID' and 'YOUR_CLIENT_SECRET' with your actual GitHub OAuth credentials.
+     -	Go to GitHub Developer Settings:
+	      - Visit GitHub Developer Settings.
+    -   Register a New OAuth Application:
+        -   Click on “New OAuth App.”
+6. Open Chrome and go to `chrome://extensions/`.
+7. Enable **Developer mode** by toggling the switch in the upper right corner.
+8. Click on **Load unpacked** and select the extension directory.
 
 ## Usage
 
