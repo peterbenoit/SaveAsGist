@@ -14,30 +14,6 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // Listen for messages to perform actions
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//     if (request.msg === 'start_auth') {
-//         launchWebAuthFlow();
-//     } else if (request.msg === 'get_selected_text') {
-//         // Use the scripting API to get the selected text
-//         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-//             chrome.scripting.executeScript(
-//                 {
-//                     target: { tabId: tabs[0].id },
-//                     func: () => window.getSelection().toString()
-//                 },
-//                 (results) => {
-//                     if (results && results[0] && results[0].result) {
-//                         sendResponse({ selectedText: results[0].result });
-//                     } else {
-//                         sendResponse({ selectedText: '' });
-//                     }
-//                 }
-//             );
-//         });
-//         return true; // Keep the messaging channel open for sendResponse
-//     }
-// });
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.msg === 'get_selected_text') {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
