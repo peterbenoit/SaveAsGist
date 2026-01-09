@@ -4,52 +4,54 @@
 <head>
 	<title>SaveAsGist</title>
 	<link rel="stylesheet" href="bulma.min.css">
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 	<link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
 	<section class="section">
 		<div class="container" id="noteScreen" style="display: none;">
+			<div class="popup-header">
+				<h1 class="popup-title"><i class="ri-save-line"></i> Save as Gist</h1>
+				<button id="btnLogout" class="button is-light is-small"><i class="ri-logout-box-line"></i>
+					Logout</button>
+			</div>
+
 			<div class="field">
 				<label class="label">Description</label>
 				<div class="control">
-					<input id="txtDescription" class="input" type="text" placeholder="Description" />
+					<input id="txtDescription" class="input" type="text" placeholder="What is this gist about?" />
 				</div>
 			</div>
 			<div class="field">
 				<label class="label">Filename</label>
 				<div class="control">
-					<input id="txtFilename" class="input" type="text" placeholder="Filename" />
+					<input id="txtFilename" class="input" type="text" placeholder="my-note.md" />
 				</div>
 			</div>
 			<div class="field">
 				<label class="label">Content</label>
 				<div class="control">
-					<textarea id="txtContent" class="textarea" placeholder="Content"></textarea>
+					<textarea id="txtContent" class="textarea" placeholder="Your content here..."></textarea>
 				</div>
 			</div>
-			<div class="field">
-				<div class="control">
-					<button id="btnSubmit" class="button is-link">Save Note</button>
-					<button id="btnLogout" class="button is-light is-small ml-2">Logout</button>
-				</div>
+
+			<div class="checkbox-group">
+				<label class="checkbox">
+					<input id="checkBox" type="checkbox" checked>
+					Save with page URL
+				</label>
+				<label class="checkbox">
+					<input id="publicCheckbox" type="checkbox">
+					Make gist public
+				</label>
 			</div>
-			<div class="field">
-				<div class="control">
-					<label class="checkbox">
-						<input id="checkBox" type="checkbox" checked="true">
-						Save with page URL?
-					</label>
-				</div>
-			</div>
-			<div class="field">
-				<div class="control">
-					<label class="checkbox">
-						<input id="publicCheckbox" type="checkbox">
-						Make gist public
-					</label>
-				</div>
+
+			<div class="button-group">
+				<button id="btnSubmit" class="button is-link"><i class="ri-save-3-fill"></i> Save Gist</button>
 			</div>
 		</div>
 	</section>
