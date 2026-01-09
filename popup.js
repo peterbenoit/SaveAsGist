@@ -9,8 +9,25 @@ chrome.storage.sync.get('gistJotToken', ({ gistJotToken }) => {
 	if (gistJotToken) {
 		// Token exists, initialize UI for creating a Gist
 		t = gistJotToken;
-		initValues();
-		document.getElementById('noteScreen').style.display = 'flex';
+
+		// Check if we're on a restricted page
+		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+			const currentUrl = tabs[0]?.url || '';
+			const isRestricted = currentUrl.startsWith('chrome://') ||
+				currentUrl.startsWith('chrome-extension://') ||
+				currentUrl.startsWith('edge://') ||
+				currentUrl.startsWith('about:') ||
+				currentUrl.includes('chrome.google.com/webstore');
+
+			if (isRestricted) {
+				document.getElementById('noteScreen').style.display = 'flex';
+				showError('This extension cannot access this page. Navigate to a regular webpage to save content.');
+				return;
+			}
+
+			initValues();
+			document.getElementById('noteScreen').style.display = 'flex';
+		});
 	} else {
 		// No token found, open the welcome page for authentication
 		chrome.tabs.create({ url: 'welcome.html' });

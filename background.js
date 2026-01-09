@@ -37,6 +37,16 @@ chrome.runtime.onInstalled.addListener(() => {
 // Handle context menu click
 chrome.contextMenus.onClicked.addListener((info, tab) => {
 	if (info.menuItemId === 'saveAsGist' && info.selectionText) {
+		// Check if we're on a restricted page
+		const currentUrl = tab.url || '';
+		if (currentUrl.startsWith('chrome://') ||
+			currentUrl.startsWith('chrome-extension://') ||
+			currentUrl.startsWith('edge://') ||
+			currentUrl.startsWith('about:')) {
+			// Can't save from restricted pages
+			return;
+		}
+
 		// Store selected text temporarily
 		chrome.storage.local.set({
 			tempSelection: info.selectionText,
@@ -53,6 +63,17 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	if (request.msg === 'get_selected_text') {
 		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+			const currentUrl = tabs[0]?.url || '';
+
+			// Check if URL is restricted
+			if (currentUrl.startsWith('chrome://') ||
+				currentUrl.startsWith('chrome-extension://') ||
+				currentUrl.startsWith('edge://') ||
+				currentUrl.startsWith('about:')) {
+				sendResponse({ selectedText: '', error: 'Cannot access this page' });
+				return;
+			}
+
 			chrome.scripting.executeScript(
 				{
 					target: { tabId: tabs[0].id },
