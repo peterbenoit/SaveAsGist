@@ -1,35 +1,44 @@
 {
-  "name": "Save as Gist",
-  "version": "0.0.2",
-  "description": "Save notes and webpage information as private gists.",
-  "manifest_version": 3,
-  "permissions": [
-    "storage",
-    "identity",
-    "activeTab",
-    "scripting",
-    "contextMenus",
-	"tabs"
-  ],
-  "host_permissions": [
-    "https://api.github.com/",
-    "https://github.com/"
-  ],
-  "background": {
-    "service_worker": "background.js",
-	"type": "module"
-  },
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
-    }
-  },
-  "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
-  }
+	"name": "Save as Gist",
+	"version": "0.0.2",
+	"description": "Save notes and webpage information as private gists.",
+	"manifest_version": 3,
+	"permissions": [
+		"storage",
+		"identity",
+		"activeTab",
+		"scripting",
+		"contextMenus",
+		"tabs"
+	],
+	"host_permissions": [
+		"https://api.github.com/",
+		"https://github.com/"
+	],
+	"content_security_policy": {
+		"extension_pages": "script-src 'self'; object-src 'self'"
+	},
+	"background": {
+		"service_worker": "background.js",
+		"type": "module"
+	},
+	"action": {
+		"default_popup": "popup.html",
+		"default_icon": {
+			"16": "icon16.png",
+			"48": "icon48.png",
+			"128": "icon128.png"
+		}
+	},
+	"icons": {
+		"16": "icon16.png",
+		"48": "icon48.png",
+		"128": "icon128.png"
+	},
+	"oauth2": {
+		"client_id": "Ov23liBSbo7Ek5UZRITg",
+		"scopes": [
+			"gist"
+		]
+	}
 }
