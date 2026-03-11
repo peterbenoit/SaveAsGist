@@ -183,6 +183,7 @@ const launchWebAuthFlow = () => {
 // Helper functions for OAuth
 const getParams = (str) => {
 	const params = {};
+	if (!str) return params; // Protect against undefined
 	const queryString = str.includes('https://') ? new URL(str).search.substring(1) : str;
 	const vars = queryString.split('&');
 	vars.forEach((param) => {
@@ -206,10 +207,11 @@ const getToken = (code) => {
 			if (data.access_token) {
 				return `access_token=${data.access_token}`;
 			} else {
-				throw new Error('Failed to retrieve access token');
+				throw new Error(data.error_description || 'Failed to retrieve access token');
 			}
 		})
 		.catch((error) => {
 			console.error('Error fetching access token:', error);
+			throw error; // Rethrow to let the caller handle it
 		});
 };
