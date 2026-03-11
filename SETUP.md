@@ -34,7 +34,7 @@ This error occurs when the GitHub OAuth app doesn't have the correct redirect UR
 
 ## Step 3: Update Your Extension Config Files
 
-### Update `config.js`:
+### Update `src/config/config.js`:
 ```javascript
 const CONFIG = {
     client_id: 'YOUR_ACTUAL_CLIENT_ID_FROM_GITHUB',
@@ -44,7 +44,7 @@ const CONFIG = {
 export default CONFIG;
 ```
 
-### Update `manifest.json`:
+### Update `src/manifest.json`:
 
 Find the `oauth2` section and update the `client_id`:
 ```json
@@ -73,8 +73,8 @@ Find the `oauth2` section and update the `client_id`:
    - Must include `https://` and trailing `/`
 
 2. **Make sure Client ID matches** in both:
-   - `config.js`
-   - `manifest.json` (oauth2.client_id)
+   - `src/config/config.js`
+   - `src/manifest.json` (oauth2.client_id)
 
 3. **Check the console** for error messages:
    - Open DevTools on the extension popup (right-click popup → Inspect)
@@ -89,7 +89,7 @@ Find the `oauth2` section and update the `client_id`:
 
 - **Wrong extension ID**: If you reload the unpacked extension, the ID might change. Get the new redirect URL and update GitHub.
 - **Missing trailing slash**: GitHub callback URLs are strict about the format.
-- **Client ID mismatch**: Make sure the same client_id is in both config.js and manifest.json.
+- **Client ID mismatch**: Make sure the same client_id is in both src/config/config.js and src/manifest.json.
 
 ## Alternative: Using GitHub Device Flow (More Secure)
 

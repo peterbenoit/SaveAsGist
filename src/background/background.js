@@ -1,4 +1,4 @@
-import CONFIG from './config.js';
+import CONFIG from '../config/config.js';
 
 const client_id = CONFIG.client_id;
 
@@ -22,7 +22,7 @@ chrome.runtime.onInstalled.addListener(() => {
 	chrome.storage.sync.get('gistJotToken', ({ gistJotToken }) => {
 		if (!gistJotToken) {
 			// If token does not exist, open the welcome page
-			chrome.tabs.create({ url: 'welcome.html' });
+			chrome.tabs.create({ url: 'welcome/welcome.html' });
 		}
 	});
 
@@ -31,6 +31,10 @@ chrome.runtime.onInstalled.addListener(() => {
 		id: 'saveAsGist',
 		title: 'Save as Gist',
 		contexts: ['selection']
+	}, () => {
+		if (chrome.runtime.lastError) {
+			console.log('Context menu item already exists or could not be created:', chrome.runtime.lastError.message);
+		}
 	});
 });
 

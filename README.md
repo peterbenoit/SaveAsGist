@@ -53,15 +53,15 @@ Quickly save any text from the web as a GitHub Gist with one click. Perfect for 
 - Click **"Update application"**
 
 **Step 5: Configure the extension with your credentials**
-- In the extension folder, copy `config.example.js` to create a new file called `config.js`
-- Edit `config.js` and add your Client ID and Client Secret from Step 2:
+- In the extension folder, copy `src/config/config.example.js` to create a new file called `src/config/config.js`
+- Edit `src/config/config.js` and add your Client ID and Client Secret from Step 2:
   ```javascript
   const CONFIG = {
       client_id: 'your_actual_client_id_from_github',
       client_secret: 'your_actual_client_secret_from_github'
   };
   ```
-- Also open `manifest.json` and find line 40 where it says `"client_id": "YOUR_CLIENT_ID"`
+- Also open `src/manifest.json` and find line 40 where it says `"client_id": "YOUR_CLIENT_ID"`
 - Replace `YOUR_CLIENT_ID` with your actual Client ID (same one as above)
 - Save both files
 
@@ -81,8 +81,8 @@ Quickly save any text from the web as a GitHub Gist with one click. Perfect for 
 - See [SETUP.md](SETUP.md) for detailed troubleshooting
 
 **Extension won't load?**
-- Make sure `config.js` exists (copy from `config.example.js`)
-- Make sure both `config.js` and `manifest.json` have the correct Client ID
+- Make sure `src/config/config.js` exists (copy from `src/config/config.example.js`)
+- Make sure both `src/config/config.js` and `src/manifest.json` have the correct Client ID
 - Check that Client ID and Secret don't have any extra spaces or quotes
 
 ## How to Use
@@ -128,11 +128,11 @@ Having issues? Check out:
 Want to contribute or modify this extension? See the development details:
 
 ### Project Structure
-- `manifest.json` - Extension configuration
-- `background.js` - Service worker (OAuth, context menu)
-- `popup.html/js/css` - Main UI
-- `welcome.html/js/css` - Authentication page
-- `config.js` - OAuth credentials (gitignored)
+- `src/manifest.json` - Extension configuration
+- `src/background/background.js` - Service worker (OAuth, context menu)
+- `src/popup/` - Main UI
+- `src/welcome/` - Authentication page
+- `src/config/config.js` - OAuth credentials (gitignored)
 
 ### Recent Updates (v0.0.2)
 - Fixed OAuth authentication flow

@@ -72,7 +72,7 @@ You must create your own OAuth app — this links the extension to **your** GitH
 
 1. Open Chrome and navigate to `chrome://extensions/`
 2. Enable **Developer mode** using the toggle in the top-right corner
-3. Click **Load unpacked** and select this folder (`SaveAsGist-dist/`)
+3. Click **Load unpacked** and select this folder (`SaveAsGist-dist/src/`)
 4. The extension will appear in your list — find it and click **"service worker"** (blue link)
 5. In the console that opens, look for a message like:
    ```
@@ -95,18 +95,18 @@ Also update the `client_id` in `manifest.json` to match the Client ID from Step 
 
 ## Step 4: Configure the Extension
 
-1. In the extension folder, copy `config.example.js` to `config.js`:
+1. In the extension folder, copy `src/config/config.example.js` to `src/config/config.js`:
    ```bash
-   cp config.example.js config.js
+   cp src/config/config.example.js src/config/config.js
    ```
-2. Open `config.js` and replace the placeholders:
+2. Open `src/config/config.js` and replace the placeholders:
    ```js
    const CONFIG = {
        client_id: 'YOUR_CLIENT_ID_HERE',      // from Step 1
        client_secret: 'YOUR_CLIENT_SECRET_HERE' // from Step 1
    };
    ```
-3. Also update `manifest.json` — find the `oauth2` section and replace `client_id` with your own.
+3. Also update `src/manifest.json` — find the `oauth2` section and replace `client_id` with your own.
 
 ---
 
@@ -131,7 +131,7 @@ Also update the `client_id` in `manifest.json` to match the Client ID from Step 
 
 | Problem | Fix |
 |--------|-----|
-| "Authentication failed" | Double-check your `client_id` and `client_secret` in `config.js` and `manifest.json` |
+| "Authentication failed" | Double-check your `client_id` and `client_secret` in `src/config/config.js` and `src/manifest.json` |
 | Callback URL mismatch | Make sure the `chromiumapp.org` URL in your GitHub OAuth App matches exactly |
 | Extension not loading | Ensure Developer mode is on and you selected the right folder |
 | No service worker link | Reload the extension from `chrome://extensions/` |
@@ -140,7 +140,7 @@ Also update the `client_id` in `manifest.json` to match the Client ID from Step 
 
 ## Security Notes
 
-- `config.js` contains your credentials — **do not share it or commit it to a public repo**
+- `src/config/config.js` contains your credentials — **do not share it or commit it to a public repo**
 - All gists are saved to **your** GitHub account using your OAuth app
 - The extension only requests the `gist` scope — it cannot access your code or other data
 EOF
